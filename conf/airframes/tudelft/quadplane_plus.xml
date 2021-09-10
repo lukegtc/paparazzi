@@ -143,31 +143,26 @@
     <servo name="MOTOR_3" no="2" min="1000" neutral="1050" max="2000"/>
     <servo name="MOTOR_4" no="3" min="1000" neutral="1050" max="2000"/>
 
-<!--    <servo name="EL_1" no="4" min="1750" neutral="2015" max="2250"/>-->
-<!--    <servo name="AZ_1" no="5" min="1095" neutral="1475" max="1875"/>-->
-<!--    <servo name="EL_2" no="8" min="1700" neutral="1950" max="2190"/>-->
-<!--    <servo name="AZ_2" no="9" min="1110" neutral="1500" max="1850"/>-->
-<!--    <servo name="EL_3" no="10" min="1670" neutral="1940" max="2190"/>-->
-<!--    <servo name="AZ_3" no="11" min="1090" neutral="1480" max="1875"/>-->
-<!--    <servo name="EL_4" no="6" min="1590" neutral="1875" max="2130"/>-->
-<!--    <servo name="AZ_4" no="7" min="1050" neutral="1435" max="1850"/>-->
 
-<!--    <servo name="EL_1" no="4" min="1650" neutral="2015" max="2250"/>-->
-<!--    <servo name="AZ_1" no="5" min="1095" neutral="1455" max="1875"/>-->
-<!--    <servo name="EL_2" no="8" min="1600" neutral="1950" max="2190"/>-->
-<!--    <servo name="AZ_2" no="9" min="1110" neutral="1480" max="1850"/>-->
-<!--    <servo name="EL_3" no="10" min="1570" neutral="1940" max="2190"/>-->
-<!--    <servo name="AZ_3" no="11" min="1090" neutral="1460" max="1875"/>-->
-<!--    <servo name="EL_4" no="6" min="1690" neutral="1875" max="2130"/>-->
-<!--    <servo name="AZ_4" no="7" min="1050" neutral="1415" max="1850"/>-->
-    <servo name="EL_1" no="4" min="1350" neutral="2015" max="2250"/>
-    <servo name="AZ_1" no="5" min="1095" neutral="1447" max="1875"/>
-    <servo name="EL_2" no="8" min="1300" neutral="1950" max="2190"/>
-    <servo name="AZ_2" no="9" min="1110" neutral="1474" max="1850"/>
-    <servo name="EL_3" no="10" min="1270" neutral="1940" max="2190"/>
-    <servo name="AZ_3" no="11" min="1090" neutral="1470" max="1875"/>
-    <servo name="EL_4" no="6" min="1390" neutral="1875" max="2130"/>
-    <servo name="AZ_4" no="7" min="1050" neutral="1420" max="1850"/>
+<!--    <servo name="EL_1" no="4" min="1350" neutral="2015" max="2250"/>-->
+<!--    <servo name="AZ_1" no="5" min="1095" neutral="1447" max="1875"/>-->
+<!--    <servo name="EL_2" no="8" min="1300" neutral="1950" max="2190"/>-->
+<!--    <servo name="AZ_2" no="9" min="1110" neutral="1474" max="1850"/>-->
+<!--    <servo name="EL_3" no="10" min="1270" neutral="1940" max="2190"/>-->
+<!--    <servo name="AZ_3" no="11" min="1090" neutral="1470" max="1875"/>-->
+<!--    <servo name="EL_4" no="6" min="1390" neutral="1875" max="2130"/>-->
+<!--    <servo name="AZ_4" no="7" min="1050" neutral="1420" max="1850"/>-->
+
+<!--    Calibrated at MAVLab the 10-09-2021-->
+    <servo name="EL_1" no="4" min="1546" neutral="1982" max="2254"/>
+    <servo name="AZ_1" no="5" min="952" neutral="1400" max="1848"/>
+    <servo name="EL_2" no="8" min="1499" neutral="1923" max="2188"/>
+    <servo name="AZ_2" no="9" min="1013" neutral="1444" max="1875"/>
+    <servo name="EL_3" no="10" min="1530" neutral="1949" max="2211"/>
+    <servo name="AZ_3" no="11" min="988" neutral="1425" max="1862"/>
+    <servo name="EL_4" no="6" min="1474" neutral="1905" max="2175"/>
+    <servo name="AZ_4" no="7" min="984" neutral="1423" max="1862"/>
+
   </servos>
 
   <commands>
@@ -419,7 +414,7 @@
     <define name="CRITIC_BAT_LEVEL" value="10.5" unit="V"/>
     <define name="LOW_BAT_LEVEL" value="10.9" unit="V"/>
     <define name="MAX_BAT_LEVEL" value="12.6" unit="V"/>
-    <define name="BAT_NB_CELLS" value="3"/>
+<!--    <define name="BAT_NB_CELLS" value="3"/>-->
   </section>
 
 </airframe>
