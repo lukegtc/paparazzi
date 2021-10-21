@@ -38,10 +38,10 @@
 
       <define name="ADC_CURRENT_DISABLE" value="TRUE"/>
 
-      <define name="USE_PWM9" value="TRUE"/>
-      <define name="USE_PWM10" value="TRUE"/>
-      <define name="USE_PWM11" value="TRUE"/>
-      <define name="USE_PWM12" value="TRUE"/>
+<!--      <define name="USE_PWM9" value="TRUE"/>-->
+<!--      <define name="USE_PWM10" value="TRUE"/>-->
+<!--      <define name="USE_PWM11" value="TRUE"/>-->
+<!--      <define name="USE_PWM12" value="TRUE"/>-->
       <define name="ACTUATORS_PWM_NB" value="12"/>
 
       <define name="RADIO_TH_HOLD"     value="RADIO_AUX1"/> <!-- Throttle hold in command laws -->
@@ -79,7 +79,8 @@
 <!--    <module name="gps"           type="ubx_ucenter"/>-->
 <!--    <module name="stabilization" type="indi_simple"/>-->
 <!--    <module name="stabilization" type="rate_indi"/>-->
-    <module name="ins"           type="ekf2" />
+<!--    <module name="ins"           type="ekf2" />-->
+
 
 <!--     For OPTITRACK -->
     <module name="actuators"     type="pwm"/>
@@ -91,7 +92,7 @@
     </module>
     <module name="stabilization" type="indi_simple"/>
     <module name="stabilization" type="rate_indi"/>
-<!--    <module name="ins"           type="extended" />-->
+    <module name="ins"           type="extended" />
 <!--    <module name="ahrs" type="int_cmpl_quat">-->
 <!--      <configure name="USE_MAGNETOMETER" value="FALSE"/>-->
 <!--      <define name="AHRS_USE_GPS_HEADING" value="TRUE"/>-->
@@ -146,14 +147,6 @@
     <servo name="MOTOR_2" no="1" min="1000" neutral="1050" max="2000"/>
     <servo name="MOTOR_3" no="2" min="1000" neutral="1050" max="2000"/>
     <servo name="MOTOR_4" no="3" min="1000" neutral="1050" max="2000"/>
-    <servo name="EL_1" no="4" min="1350" neutral="2015" max="2250"/>
-    <servo name="AZ_1" no="5" min="1095" neutral="1447" max="1875"/>
-    <servo name="EL_2" no="8" min="1300" neutral="1950" max="2190"/>
-    <servo name="AZ_2" no="9" min="1110" neutral="1474" max="1850"/>
-    <servo name="EL_3" no="10" min="1270" neutral="1940" max="2190"/>
-    <servo name="AZ_3" no="11" min="1090" neutral="1470" max="1875"/>
-    <servo name="EL_4" no="6" min="1390" neutral="1875" max="2130"/>
-    <servo name="AZ_4" no="7" min="1050" neutral="1420" max="1850"/>
   </servos>
 
   <commands>
@@ -189,14 +182,6 @@
     <set servo="MOTOR_2"   value="($th_hold? -9600 : overactuated_mixing.commands[1])"/>
     <set servo="MOTOR_3"   value="($th_hold? -9600 : overactuated_mixing.commands[2])"/>
     <set servo="MOTOR_4"   value="($th_hold? -9600 : overactuated_mixing.commands[3])"/>
-    <set servo="EL_1"   value="(overactuated_mixing.commands[4])"/>
-    <set servo="EL_2"   value="(overactuated_mixing.commands[5])"/>
-    <set servo="EL_3"   value="(overactuated_mixing.commands[6])"/>
-    <set servo="EL_4"   value="(overactuated_mixing.commands[7])"/>
-    <set servo="AZ_1"   value="(overactuated_mixing.commands[8])"/>
-    <set servo="AZ_2"   value="(overactuated_mixing.commands[9])"/>
-    <set servo="AZ_3"   value="(-overactuated_mixing.commands[10])"/>
-    <set servo="AZ_4"   value="(-overactuated_mixing.commands[11])"/>
   </command_laws>
 
 
