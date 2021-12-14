@@ -28,10 +28,10 @@
 
 #include "modules/gcnet/gcnet_main.h"
 #include "state.h"
-#include "subsystems/radio_control.h"
+#include "modules/radio_control/radio_control.h"
 #include "autopilot.h"
-#include "subsystems/imu.h"
-#include "subsystems/gps.h"
+#include "modules/imu/imu.h"
+#include "modules/gps/gps.h"
 
 /** For waypoints */
 #include "firmwares/rotorcraft/navigation.h"
@@ -47,22 +47,17 @@
 #endif
 
 #include "boards/bebop/actuators.h"
-#include "subsystems/abi.h"
+#include "modules/core/abi.h"
 
 uint16_t nn_rpm_obs[4] = {0,0,0,0};
-uint16_t nn_rpm_ref[4] = {0,0,0,0};
+//uint16_t nn_rpm_ref[4] = {0,0,0,0};
 static abi_event rpm_read_ev;
-static void rpm_read_cb(uint8_t __attribute__((unused)) sender_id, uint16_t *rpm_obs_read, uint16_t *rpm_ref_read, uint8_t __attribute__((unused)) num_act)
+static void rpm_read_cb(uint8_t __attribute__((unused)) sender_id, uint16_t *rpm_obs_read, uint8_t __attribute__((unused)) num_act)
 {
    nn_rpm_obs[0] = rpm_obs_read[0];
    nn_rpm_obs[1] = rpm_obs_read[1];
    nn_rpm_obs[2] = rpm_obs_read[2];
    nn_rpm_obs[3] = rpm_obs_read[3];
-
-   nn_rpm_ref[0] = rpm_ref_read[0];
-   nn_rpm_ref[1] = rpm_ref_read[1];
-   nn_rpm_ref[2] = rpm_ref_read[2];
-   nn_rpm_ref[3] = rpm_ref_read[3];
 }
 
 float state_nn[NUM_STATES];
