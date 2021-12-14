@@ -25,13 +25,6 @@
     <module name="motor_mixing"/>
     <module name="actuators" type="bebop"/>
     <module name="imu" type="bebop"/>
-<!--
-      <define name="BEBOP_LOWPASS_FILTER" value="MPU60X0_DLPF_42HZ"/>
-      <define name="BEBOP_SMPLRT_DIV" value="0"/>
-      <define name="BEBOP_GYRO_RANGE" value="MPU60X0_GYRO_RANGE_2000"/>
-      <define name="BEBOP_ACCEL_RANGE" value="MPU60X0_ACCEL_RANGE_16G"/>
-    </module>
--->
     <module name="gps" type="datalink"/>
     <module name="stabilization" type="indi_simple"/>
     <module name="stabilization" type="rate_indi"/>
@@ -169,10 +162,10 @@
 
   <section name="STABILIZATION_ATTITUDE_INDI" prefix="STABILIZATION_INDI_">
     <!-- control effectiveness -->
-    <define name="G1_P" value="0.0397"/>
-    <define name="G1_Q" value="0.0299"/>
-    <define name="G1_R" value="0.0014"/>
-    <define name="G2_R" value="0.1219"/>
+    <define name="G1_P" value="0.048411"/>
+    <define name="G1_Q" value="0.03215"/>
+    <define name="G1_R" value="0.0033"/>
+    <define name="G2_R" value="0.180613"/>
 
     <!-- reference acceleration for attitude control -->
     <define name="REF_ERR_P" value="600.0"/>

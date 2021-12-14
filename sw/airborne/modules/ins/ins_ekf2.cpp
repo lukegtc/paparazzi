@@ -398,6 +398,9 @@ void ins_ekf2_init(void)
   /* Set range as default AGL measurement if possible */
   ekf_params->range_aid = INS_EKF2_RANGE_MAIN_AGL;
 
+  ekf_params->accel_noise = 10.0f;
+  ekf_params->gps_pos_noise = 0.01f;
+
   /* Initialize struct */
   ekf2.ltp_stamp = 0;
   ekf2.accel_stamp = 0;
