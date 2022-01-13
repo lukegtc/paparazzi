@@ -26,13 +26,13 @@
 #include "firmwares/rotorcraft/stabilization/stabilization_attitude_rc_setpoint.h"
 #include "generated/airframe.h"
 
-#include "subsystems/radio_control.h"
+#include "modules/radio_control/radio_control.h"
 #include "state.h"
 #include "firmwares/rotorcraft/stabilization/stabilization_attitude.h"
 #include "firmwares/rotorcraft/autopilot_rc_helpers.h"
 #include "mcu_periph/sys_time.h"
 
-#include "modules/Overactuated_vehicle/Overactuated_mixing.h"
+#include "modules/overactuated_vehicle/overactuated_mixing.h"
 
 #ifndef STABILIZATION_ATTITUDE_DEADBAND_A
 #define STABILIZATION_ATTITUDE_DEADBAND_A 0

@@ -30,7 +30,7 @@
 
 <!--      Air speed sensor-->
       <module name="airspeed" type="ms45xx_i2c">
-        <define name="MS45XX_I2C_DEV" value="i2c1"/>
+        <define name="MS45XX_I2C_DEV" value="i2c2"/>
         <define name="MS45XX_AIRSPEED_SCALE" value="2.4"/>
         <define name="USE_AIRSPEED_MS45XX" value="TRUE"/>
       </module>
@@ -159,7 +159,7 @@
 <!--    </module>-->
 
     <module name="motor_mixing"/>
-    <module name="Overactuated_mixing"/>
+    <module name="overactuated_mixing"/>
   </firmware>
 
   <servos>
