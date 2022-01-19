@@ -746,7 +746,7 @@ void overactuated_mixing_run(pprz_t in_cmd[], bool in_flight)
 
 
     /// Case of Manual direct mode [FAILSAFE]
-    if(radio_control.values[RADIO_MODE] < -500){
+    if(radio_control.values[RADIO_MODE] > 500){
 
         //INIT AND BOOLEAN RESET
         if(FAILSAFE_engaged == 0){
@@ -1186,7 +1186,7 @@ void overactuated_mixing_run(pprz_t in_cmd[], bool in_flight)
     }
 
     /// Case of INDI control mode as on simulink
-    if(radio_control.values[RADIO_MODE] > 500)
+    if(radio_control.values[RADIO_MODE] < -500)
     {
         //INIT AND BOOLEAN RESET
         if(INDI_engaged == 0){
