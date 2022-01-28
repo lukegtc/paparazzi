@@ -106,7 +106,6 @@
     <module name="gps" type="ublox">
       <configure name="GPS_BAUD" value="B460800"/><!-- UBX message only but rate set to ~12HZ with GPS, GLONASS, BEIDU and GALILEIO at the SAME time is lots of GNSS data-->
     </module>
-    <module name="gps"           type="ubx_ucenter"/>
 <!--    <module name="stabilization" type="indi_simple"/>-->
 <!--    <module name="stabilization" type="rate_indi"/>-->
 
@@ -326,16 +325,27 @@
     <define name="PID_MAX_YAW_ORDER_AZ" value="30" unit="deg"/><!--MAX order for el servos are the physical one-->
 
     <!-- INDI proportional gains -->
-    <define name="INDI_REF_ERR_P" value="5.5"/>
-    <define name="INDI_REF_ERR_Q" value="6"/>
-    <define name="INDI_REF_ERR_R" value="3.8"/>
+<!--    <define name="INDI_REF_ERR_P" value="5.5"/>-->
+<!--    <define name="INDI_REF_ERR_Q" value="6"/>-->
+<!--    <define name="INDI_REF_ERR_R" value="3.8"/>-->
+
+    <define name="INDI_REF_ERR_P" value="1"/>
+    <define name="INDI_REF_ERR_Q" value="1"/>
+    <define name="INDI_REF_ERR_R" value="1"/>
+
     <define name="INDI_REF_ERR_X" value="1.5"/>
     <define name="INDI_REF_ERR_Y" value="1.5"/>
     <define name="INDI_REF_ERR_Z" value="1.3"/>
     <!-- INDI derivative gains -->
-    <define name="INDI_REF_RATE_P" value="8"/>
-    <define name="INDI_REF_RATE_Q" value="10"/>
-    <define name="INDI_REF_RATE_R" value="6.8"/>
+<!--    <define name="INDI_REF_RATE_P" value="8"/>-->
+<!--    <define name="INDI_REF_RATE_Q" value="10"/>-->
+<!--    <define name="INDI_REF_RATE_R" value="6.8"/>-->
+
+    <define name="INDI_REF_RATE_P" value="25"/>
+    <define name="INDI_REF_RATE_Q" value="25"/>
+    <define name="INDI_REF_RATE_R" value="6"/>
+
+
     <define name="INDI_REF_RATE_X" value="2.35"/>
     <define name="INDI_REF_RATE_Y" value="2.35"/>
     <define name="INDI_REF_RATE_Z" value="8.85"/>
