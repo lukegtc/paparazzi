@@ -97,34 +97,29 @@
       <configure name="MODEM_BAUD" value="B115200"/>
     </module>
 
-    <!--     For OUTSIDE -->
-<!--    <module name="actuators" type="pwm"/>-->
-<!--    <module name="imu" type="mpu6000"/>-->
-<!--    <module name="gps"           type="ublox"/>-->
-
-<!--    MODIFIED WITH ERIK THE 27 of Jan 2022-->
-    <module name="gps" type="ublox">
-      <configure name="GPS_BAUD" value="B460800"/><!-- UBX message only but rate set to ~12HZ with GPS, GLONASS, BEIDU and GALILEIO at the SAME time is lots of GNSS data-->
-    </module>
-<!--    <module name="stabilization" type="indi_simple"/>-->
-<!--    <module name="stabilization" type="rate_indi"/>-->
-
-<!--    <module name="ins" type="ekf2"/>-->
-
-<!--     For OPTITRACK -->
     <module name="actuators"     type="pwm"/>
     <module name="imu"           type="mpu6000"/>
-<!--    <module name="gps"           type="datalink">-->
-<!--      <define name="INS_USE_GPS_ALT" value="1"/>-->
-<!--      <define name="INS_VFF_R_GPS" value="0.09"/>-->
-<!--      <define name="AHRS_HEADING_UPDATE_GPS_MIN_SPEED" value="0"/>-->
+
+    <!--     For OUTSIDE -->
+<!--    <module name="gps" type="ublox">-->
+<!--      <configure name="GPS_BAUD" value="B460800"/>&lt;!&ndash; UBX message only but rate set to ~12HZ with GPS, GLONASS, BEIDU and GALILEIO at the SAME time is lots of GNSS data&ndash;&gt;-->
 <!--    </module>-->
+    <!--     For OPTITRACK -->
+    <module name="gps"           type="datalink">
+      <define name="INS_USE_GPS_ALT" value="1"/>
+      <define name="INS_VFF_R_GPS" value="0.09"/>
+      <define name="AHRS_HEADING_UPDATE_GPS_MIN_SPEED" value="0"/>
+    </module>
+
     <module name="stabilization" type="indi_simple"/>
     <module name="stabilization" type="rate_indi"/>
+
     <module name="ins"           type="extended" />
+    <!--    <module name="ins" type="ekf2"/>-->
+
     <module name="ahrs"          type="int_cmpl_quat">
-<!--      <configure name="USE_MAGNETOMETER" value="FALSE"/>-->
-<!--      <define name="AHRS_USE_GPS_HEADING" value="TRUE"/>-->
+      <configure name="USE_MAGNETOMETER" value="FALSE"/>
+      <define name="AHRS_USE_GPS_HEADING" value="TRUE"/>
     </module>
     
 <!--    <module name="air_data"/>-->
@@ -196,13 +191,14 @@
 <!--    <servo name="EL_4" no="6" min="827" neutral="1905" max="2175"/>-->
 <!--    <servo name="AZ_4" no="7" min="984" neutral="1423" max="1862"/>-->
 
-    <servo name="EL_1" no="4" min="893" neutral="1573" max="2254"/>
-    <servo name="AZ_1" no="5" min="952" neutral="1400" max="1848"/>
-    <servo name="EL_2" no="8" min="863" neutral="1525" max="2188"/>
-    <servo name="AZ_2" no="9" min="1013" neutral="1444" max="1875"/>
-    <servo name="EL_3" no="10" min="902" neutral="1556" max="2211"/>
-    <servo name="AZ_3" no="11" min="988" neutral="1425" max="1862"/>
-    <servo name="EL_4" no="6" min="827" neutral="1501" max="2175"/>
+    <servo name="EL_1" no="8" min="650" neutral="1500" max="2350"/>
+    <servo name="EL_2" no="9" min="650" neutral="1500" max="2350"/>
+    <servo name="EL_3" no="10" min="650" neutral="1500" max="2350"/>
+    <servo name="EL_4" no="11" min="650" neutral="1500" max="2350"/>
+
+    <servo name="AZ_1" no="4" min="952" neutral="1400" max="1848"/>
+    <servo name="AZ_2" no="5" min="1013" neutral="1444" max="1875"/>
+    <servo name="AZ_3" no="6" min="988" neutral="1425" max="1862"/>
     <servo name="AZ_4" no="7" min="984" neutral="1423" max="1862"/>
 
   </servos>
@@ -365,31 +361,25 @@
 <!--    <define name="SERVO_EL_MIN_ANGLE" value="-32.5" unit="deg"/>-->
 
     <define name="SERVO_EL_MAX_ANGLE" value="25" unit="deg"/>
-    <define name="SERVO_EL_MIN_ANGLE" value="-100" unit="deg"/>
+    <define name="SERVO_EL_MIN_ANGLE" value="-130" unit="deg"/>
 
-    <define name="SERVO_EL_1_ZERO_VALUE" value="-44.23" unit="deg"/>
-    <define name="SERVO_EL_2_ZERO_VALUE" value="-39.9" unit="deg"/>
-    <define name="SERVO_EL_3_ZERO_VALUE" value="-42.9" unit="deg"/>
-    <define name="SERVO_EL_4_ZERO_VALUE" value="-37.6" unit="deg"/>
+<!--    <define name="SERVO_EL_1_ZERO_VALUE" value="-44.23" unit="deg"/>-->
+    <define name="SERVO_EL_1_ZERO_VALUE" value="-53" unit="deg"/>
 
-    <define name="SERVO_AZ_1_ZERO_VALUE" value="2" unit="deg"/>
+    <define name="SERVO_EL_2_ZERO_VALUE" value="-56" unit="deg"/>
+
+    <define name="SERVO_EL_3_ZERO_VALUE" value="-53" unit="deg"/>
+    <define name="SERVO_EL_4_ZERO_VALUE" value="-51" unit="deg"/>
+
+    <define name="SERVO_AZ_1_ZERO_VALUE" value="-3" unit="deg"/>
     <define name="SERVO_AZ_2_ZERO_VALUE" value="2" unit="deg"/>
-    <define name="SERVO_AZ_3_ZERO_VALUE" value="2" unit="deg"/>
-    <define name="SERVO_AZ_4_ZERO_VALUE" value="2" unit="deg"/>
+    <define name="SERVO_AZ_3_ZERO_VALUE" value="8" unit="deg"/>
+    <define name="SERVO_AZ_4_ZERO_VALUE" value="6" unit="deg"/>
 
     <define name="MAX_THETA_FWD" value="15" unit="deg"/>
     <define name="MIN_THETA_FWD" value="-15" unit="deg"/>
     <define name="MAX_PHI_FWD" value="30" unit="deg"/>
 
-    <!-- NEUTRAL ORDERS-->
-
-    <define name="NEUTRAL_EL_ORDER_1" value="5066 + 710" unit="PPZ"/>
-    <define name="NEUTRAL_EL_ORDER_2" value="4724 + 710" unit="PPZ"/>
-    <define name="NEUTRAL_EL_ORDER_3" value="4675 + 710" unit="PPZ"/>
-    <define name="NEUTRAL_EL_ORDER_4" value="3347 + 710" unit="PPZ"/>
-
-    <define name="NEUTRAL_AZ_ORDER" value="-310" unit="PPZ"/>
-    <define name="NEUTRAL_YAW_ORDER" value="0" unit="PPZ"/>
 
     <!-- Filters properties for PID-->
     <define name="FILT_CUTOFF_ANG_ERR" value="30" unit="rad/s"/>
@@ -414,12 +404,19 @@
     <define name="I_XX" value="0.15" unit="Kg*m^2"/>
     <define name="I_YY" value="0.115" unit="Kg*m^2"/>
     <define name="I_ZZ" value="0.2" unit="Kg*m^2"/>
-    <define name="MASS" value="2.4" unit="Kg"/>
-    <define name="L1" value="0.183" unit="m"/>
-    <define name="L2" value="0.183" unit="m"/>
-    <define name="L3" value="0.36" unit="m"/>
-    <define name="L4" value="0.25" unit="m"/>
+<!--    <define name="MASS" value="2.4" unit="Kg"/>-->
+<!--    <define name="L1" value="0.183" unit="m"/>-->
+<!--    <define name="L2" value="0.183" unit="m"/>-->
+<!--    <define name="L3" value="0.36" unit="m"/>-->
+<!--    <define name="L4" value="0.25" unit="m"/>-->
+<!--    <define name="LZ" value="0." unit="m"/>-->
+    <define name="MASS" value="2.33" unit="Kg"/>
+    <define name="L1" value="0.231" unit="m"/>
+    <define name="L2" value="0.231" unit="m"/>
+    <define name="L3" value="0.39" unit="m"/>
+    <define name="L4" value="0.39" unit="m"/>
     <define name="LZ" value="0." unit="m"/>
+
     <define name="PROPELLER_INERTIA" value="1.984e-5" unit="Kg*m^2"/>
 
     <define name="Cl_alpha" value="5.18"/>
@@ -477,12 +474,20 @@
     <define name="ACCEL_Z_SENS" value="4.84846920056402" integer="16"/>
 
     <!-- Calibrated at TUDelft 30-06-2021 (internal magnetometer) -->
-    <define name="MAG_X_NEUTRAL" value="-7"/>
-    <define name="MAG_Y_NEUTRAL" value="5"/>
-    <define name="MAG_Z_NEUTRAL" value="6"/>
-    <define name="MAG_X_SENS" value="12.877116122504509" integer="16"/>
-    <define name="MAG_Y_SENS" value="13.120879701323037" integer="16"/>
-    <define name="MAG_Z_SENS" value="15.522979897859624" integer="16"/>
+<!--    <define name="MAG_X_NEUTRAL" value="-7"/>-->
+<!--    <define name="MAG_Y_NEUTRAL" value="5"/>-->
+<!--    <define name="MAG_Z_NEUTRAL" value="6"/>-->
+<!--    <define name="MAG_X_SENS" value="12.877116122504509" integer="16"/>-->
+<!--    <define name="MAG_Y_SENS" value="13.120879701323037" integer="16"/>-->
+<!--    <define name="MAG_Z_SENS" value="15.522979897859624" integer="16"/>-->
+
+    <!-- Calibrated at Valkemburg 28-01-2022 (internal magnetometer) -->
+    <define name="MAG_X_NEUTRAL" value="-9"/>
+    <define name="MAG_Y_NEUTRAL" value="0"/>
+    <define name="MAG_Z_NEUTRAL" value="9"/>
+    <define name="MAG_X_SENS" value="12.423406586020796" integer="16"/>
+    <define name="MAG_Y_SENS" value="13.092211467953533" integer="16"/>
+    <define name="MAG_Z_SENS" value="14.952916167817003" integer="16"/>
 
 
     <!-- Define axis in hover frame -->

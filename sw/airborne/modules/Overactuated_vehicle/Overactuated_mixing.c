@@ -122,9 +122,9 @@ float K_ppz_angle_el = (9600 * 2) / (OVERACTUATED_MIXING_SERVO_EL_MAX_ANGLE - OV
 float K_ppz_angle_az = (9600 * 2) / (OVERACTUATED_MIXING_SERVO_AZ_MAX_ANGLE - OVERACTUATED_MIXING_SERVO_AZ_MIN_ANGLE);
 
 // INDI VARIABLES
-float prioritized_actuator_states[INDI_NUM_ACT] = {0, 0, 0, 0,
-                                                   0, 0, 0, 0,
-                                                   0, 0, 0, 0};
+float prioritized_actuator_states[INDI_NUM_ACT] = {0.f , 0.f, 0.f, 0.f,
+                                                   0.f, 0.f, 0.f, 0.f,
+                                                   0.f, 0.f, 0.f, 0.f};
 float indi_du[INDI_NUM_ACT];
 float indi_u[INDI_NUM_ACT];
 float indi_u_scaled[INDI_NUM_ACT];
@@ -2209,8 +2209,8 @@ void overactuated_mixing_run(pprz_t in_cmd[])
             //Compute the command for the PPZ message
             alt_cmd = radio_control.values[RADIO_THROTTLE];
             //Also add position computation if we are in this mode:
-            pos_order_body[0] = - radio_control.values[RADIO_PITCH]/K_ppz_angle_el;
-            pos_order_body[1] =  radio_control.values[RADIO_ROLL]/K_ppz_angle_el;
+            pos_order_body[0] = radio_control.values[RADIO_PITCH]/K_ppz_angle_el * 1.8;
+            pos_order_body[1] =  radio_control.values[RADIO_ROLL]/K_ppz_angle_az;
         }
         else{
             //Protection control for altitude saturation on the pitch authority:
@@ -2277,12 +2277,12 @@ void overactuated_mixing_run(pprz_t in_cmd[])
 
 
         //Write the order on the message variables:
-        roll_cmd = euler_order[0] * 9.6;
-        pitch_cmd = euler_order[1] * 9.6;
-        yaw_motor_cmd = psi_order_motor * 9.6f;
-        yaw_tilt_cmd = euler_order[2] * K_ppz_angle_az;
-        elevation_cmd = pos_order_body[0] * K_ppz_angle_el;
-        azimuth_cmd = pos_order_body[1] * K_ppz_angle_az;
+        roll_cmd = euler_order[0] * 180 / M_PI;
+        pitch_cmd = euler_order[1] * 180 / M_PI;
+        yaw_motor_cmd = psi_order_motor;
+        yaw_tilt_cmd = euler_order[2];
+        elevation_cmd = pos_order_body[0] * 180 / M_PI;
+        azimuth_cmd = pos_order_body[1] * 180 / M_PI;
 
     }
 
@@ -2444,11 +2444,12 @@ void overactuated_mixing_run(pprz_t in_cmd[])
         Bound(prioritized_actuator_states[2],OVERACTUATED_MIXING_MOTOR_MIN_OMEGA,OVERACTUATED_MIXING_MOTOR_MAX_OMEGA);
         Bound(prioritized_actuator_states[3],OVERACTUATED_MIXING_MOTOR_MIN_OMEGA,OVERACTUATED_MIXING_MOTOR_MAX_OMEGA);
 
+        int local_tilt_value = - radio_control.values[RADIO_AUX3];
         //Tilting servos
-        prioritized_actuator_states[4] = - (radio_control.values[RADIO_PITCH]  + 9600) / (9600 * 2) * M_PI;
-        prioritized_actuator_states[5] = - (radio_control.values[RADIO_PITCH]  + 9600) / (9600 * 2) * M_PI;
-        prioritized_actuator_states[6] = - (radio_control.values[RADIO_PITCH]  + 9600) / (9600 * 2) * M_PI;
-        prioritized_actuator_states[7] = - (radio_control.values[RADIO_PITCH]  + 9600) / (9600 * 2) * M_PI;
+        prioritized_actuator_states[4] = - (local_tilt_value * 1.f + 9600 )/ 38400 * M_PI;
+        prioritized_actuator_states[5] = - (local_tilt_value * 1.f + 9600 )/ 38400 * M_PI;
+        prioritized_actuator_states[6] = - (local_tilt_value * 1.f + 9600 )/ 38400 * M_PI;
+        prioritized_actuator_states[7] = - (local_tilt_value * 1.f + 9600 )/ 38400 * M_PI;
 
 
 //        //Local testing the CA algorithms:
