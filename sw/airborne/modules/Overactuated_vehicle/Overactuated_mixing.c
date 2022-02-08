@@ -2209,7 +2209,7 @@ void overactuated_mixing_run(pprz_t in_cmd[])
             //Compute the command for the PPZ message
             alt_cmd = radio_control.values[RADIO_THROTTLE];
             //Also add position computation if we are in this mode:
-            pos_order_body[0] = radio_control.values[RADIO_PITCH]/K_ppz_angle_el * 1.8;
+            pos_order_body[0] = - radio_control.values[RADIO_PITCH]/K_ppz_angle_el;
             pos_order_body[1] =  radio_control.values[RADIO_ROLL]/K_ppz_angle_az;
         }
         else{
