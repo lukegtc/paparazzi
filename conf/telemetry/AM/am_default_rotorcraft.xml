@@ -38,7 +38,6 @@
       <message name="WIND_INFO_RET"            period="1."/>                  
       <message name="MOTOR_MIXING"             period=".2"/>
       <message name="OVERACTUATED_VARIABLES"   period=".2"/>
-      <message name="GAINS_OVERACTUATED"       period=".2"/>
       <message name="ACTUATORS_OUTPUT"         period=".2"/>
       <message name="INDI_CMD"                 period=".2"/>
       <message name="B_MATRIX_SEND_LINEAR"     period=".2"/>
@@ -213,8 +212,7 @@
       <message name="ROTORCRAFT_STATUS"        period="1"/>
       <message name="OVERACTUATED_VARIABLES"   period=".005"/>
       <message name="ACTUATORS_OUTPUT"         period=".005"/>
-      <message name="GAINS_OVERACTUATED"       period="5"/>
-      <message name="INDI_CMD"                 period=".005"/>
+      <message name="INDI_CMD"                 period=".004"/>
       <message name="B_MATRIX_SEND_LINEAR"     period=".005"/>
       <message name="B_MATRIX_SEND_ANGULAR"    period=".005"/>
     </mode>

@@ -292,7 +292,7 @@
     <!-- Maximum orders -->
     <!-- General -->
     <define name="MAX_PHI" value="25" unit="deg"/>
-    <define name="MAX_THETA" value="25" unit="deg"/>
+    <define name="MAX_THETA" value="75" unit="deg"/>
     <define name="MAX_PSI_ERR" value="80" unit="deg"/>
     <define name="MAX_X_ERR" value="0.5" unit="m"/>
     <define name="MAX_Y_ERR" value="0.5" unit="m"/>
