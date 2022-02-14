@@ -61,14 +61,10 @@ float control_input_INDI_state[INDI_NUM_ACT];
 float actuator_state_filt[INDI_NUM_ACT];
 float actuator_state_filt_dot[N_ACT_REAL];
 float euler_error[3];
-float euler_error_dot[3];
 float euler_error_integrated[3];
-float euler_error_old[3];
 float angular_body_error[3];
 float pos_error[3];
-float pos_error_dot[3];
 float pos_error_integrated[3];
-float pos_error_old[3];
 float pos_order_body[3];
 float pos_order_earth[3];
 float euler_order[3];
@@ -76,8 +72,6 @@ float psi_order_motor;
 float rate_vect_filt_deg[3];
 float rate_vect_filt_dot_deg[3];
 
-float euler_error_dot_filt[3];
-float pos_error_dot_filt[3];
 
 //Flight states variables:
 bool INDI_engaged = 0;
@@ -156,6 +150,7 @@ Butterworth2LowPass actuator_state_filters[N_ACT_REAL];   //Filter of actuators
 
 Butterworth2LowPass angular_error_dot_filters[3]; //Filter of angular error
 Butterworth2LowPass position_error_dot_filters[3];//Filter of position error
+float rate_filter_tau;
 
 struct PID_over pid_gains_over = {
         .p = { OVERACTUATED_MIXING_PID_P_GAIN_PHI,
@@ -1823,17 +1818,12 @@ static void send_actuator_variables( struct transport_tx *trans , struct link_de
 void init_filters(void){
     float sample_time = 1.0 / PERIODIC_FREQUENCY;
     //Sensors cutoff frequency
-    float tau_p = 1.0 / ( OVERACTUATED_MIXING_FILT_CUTOFF_P);
-    float tau_q = 1.0 / (OVERACTUATED_MIXING_FILT_CUTOFF_Q);
-    float tau_r = 1.0 / ( OVERACTUATED_MIXING_FILT_CUTOFF_R);
-    float tau_acc_x = 1.0 / ( OVERACTUATED_MIXING_FILT_CUTOFF_ACC_X);
-    float tau_acc_y = 1.0 / (OVERACTUATED_MIXING_FILT_CUTOFF_ACC_Y);
-    float tau_acc_z = 1.0 / (OVERACTUATED_MIXING_FILT_CUTOFF_ACC_Z);
+    float tau_ang_acc = 1.0 / (OVERACTUATED_MIXING_FILT_CUTOFF_ANG_ACC);
+    float tau_lin_acc = 1.0 / (OVERACTUATED_MIXING_FILT_CUTOFF_LIN_ACC);
     float tau_el = 1.0 / (OVERACTUATED_MIXING_FILT_CUTOFF_ACTUATORS_EL);
-    float tau_az = 1.0 / ( OVERACTUATED_MIXING_FILT_CUTOFF_ACTUATORS_AZ);
+    float tau_az = 1.0 / (OVERACTUATED_MIXING_FILT_CUTOFF_ACTUATORS_AZ);
     float tau_motor = 1.0 / (OVERACTUATED_MIXING_FILT_CUTOFF_ACTUATORS_MOTOR);
-    float tau_ang_err = 1.0 / (OVERACTUATED_MIXING_FILT_CUTOFF_ANG_ERR);
-    float tau_pos_err = 1.0 / (OVERACTUATED_MIXING_FILT_CUTOFF_POS_ERR);
+    rate_filter_tau = 1 - exp(-OVERACTUATED_MIXING_FILT_CUTOFF_RATES/PERIODIC_FREQUENCY);
 
     // Initialize filters for the actuators
     for (uint8_t i = 0; i < N_ACT_REAL; i++) {
@@ -1848,21 +1838,12 @@ void init_filters(void){
         }
     }
 
-    // Initialize filters for the rates and accelerations
-    init_butterworth_2_low_pass(&measurement_rates_filters[0], tau_p, sample_time, 0.0);
-    init_butterworth_2_low_pass(&measurement_rates_filters[1], tau_q, sample_time, 0.0);
-    init_butterworth_2_low_pass(&measurement_rates_filters[2], tau_r, sample_time, 0.0);
-    init_butterworth_2_low_pass(&measurement_acc_filters[0], tau_acc_x, sample_time, 0.0);
-    init_butterworth_2_low_pass(&measurement_acc_filters[1], tau_acc_y, sample_time, 0.0);
-    init_butterworth_2_low_pass(&measurement_acc_filters[2], tau_acc_z, sample_time, 0.0);
+    // Initialize filters for the rates derivative and accelerations
+    for (int i = 0; i < 3; i++) {
+        init_butterworth_2_low_pass(&measurement_rates_filters[i], tau_ang_acc, sample_time, 0.0);
+        init_butterworth_2_low_pass(&measurement_acc_filters[i], tau_lin_acc, sample_time, 0.0);
+    }
 
-    // Initialize filters for the derivative of the position and angular error
-    init_butterworth_2_low_pass(&angular_error_dot_filters[0], tau_ang_err, sample_time, 0.0);
-    init_butterworth_2_low_pass(&angular_error_dot_filters[1], tau_ang_err, sample_time, 0.0);
-    init_butterworth_2_low_pass(&angular_error_dot_filters[2], tau_ang_err, sample_time, 0.0);
-    init_butterworth_2_low_pass(&position_error_dot_filters[0], tau_pos_err, sample_time, 0.0);
-    init_butterworth_2_low_pass(&position_error_dot_filters[1], tau_pos_err, sample_time, 0.0);
-    init_butterworth_2_low_pass(&position_error_dot_filters[2], tau_pos_err, sample_time, 0.0);
 }
 
 /**
@@ -1872,6 +1853,7 @@ void get_actuator_state(void)
 {
     //actuator dynamics
     for (uint8_t i = 0; i < N_ACT_REAL; i++) {
+
         //Motors
         if(i < 4){
             actuator_state[i] = actuator_state[i] + act_dyn[i] * (indi_u[i] - actuator_state[i]);
@@ -1887,13 +1869,13 @@ void get_actuator_state(void)
             actuator_state[i] = actuator_state[i] + act_dyn[i] * (indi_u[i] - actuator_state[i]);
             Bound(actuator_state[i],OVERACTUATED_MIXING_SERVO_AZ_MIN_ANGLE,OVERACTUATED_MIXING_SERVO_AZ_MAX_ANGLE);
         }
+
         //Propagate the actuator values into the filters and calculate the derivative
         update_butterworth_2_low_pass(&actuator_state_filters[i], actuator_state[i]);
         actuator_state_filt[i] = actuator_state_filters[i].o[0];
         actuator_state_filt_dot[i] = (actuator_state_filters[i].o[0]
                                       - actuator_state_filters[i].o[1]) * PERIODIC_FREQUENCY;
     }
-
 }
 
 /**
@@ -1946,7 +1928,7 @@ void init_variables(void){
         //Calculate the angular acceleration via finite difference
         rate_vect_filt_dot[i] = (measurement_rates_filters[i].o[0]
                                  - measurement_rates_filters[i].o[1]) * PERIODIC_FREQUENCY;
-        rate_vect_filt[i] = measurement_rates_filters[i].o[0];
+        rate_vect_filt[i] = rate_vect_filt[i] + rate_filter_tau * (rate_vect[i] - rate_vect_filt[i]);
         acc_vect_filt[i] = measurement_acc_filters[i].o[0];
     }
 
@@ -2022,27 +2004,16 @@ void overactuated_mixing_run(pprz_t in_cmd[])
         pos_error[1] = pos_setpoint[1] - pos_vect[1];
         pos_error[2] = pos_setpoint[2] + pos_vect[2];
 
-        //Calculate the position error derivative and integration
+        //Calculate and bound the position error integration
         for (i = 0; i < 3; i++) {
-            pos_error_dot[i] = (pos_error[i] - pos_error_old[i]) * PERIODIC_FREQUENCY;
-            pos_error_old[i] = pos_error[i];
             pos_error_integrated[i] += pos_error[i] / PERIODIC_FREQUENCY;
-        }
-
-        /* Propagate the filter on the position error derivative therms */
-        for (i = 0; i < 3; i++) {
-            update_butterworth_2_low_pass(&position_error_dot_filters[i], pos_error_dot[i]);
-            pos_error_dot_filt[i] = position_error_dot_filters[i].o[0];
+            BoundAbs(pos_error_integrated[i], OVERACTUATED_MIXING_PID_MAX_POS_ERR_INTEGRATIVE);
         }
 
         //Now bound the error within the defined ranges:
         BoundAbs(pos_error[0], max_value_error.x);
         BoundAbs(pos_error[1], max_value_error.y);
         BoundAbs(pos_error[2], max_value_error.z);
-        for (i = 0; i < 3; i++) {
-            BoundAbs(pos_error_integrated[i], OVERACTUATED_MIXING_PID_MAX_POS_ERR_INTEGRATIVE);
-            BoundAbs(pos_error_dot_filt[i], OVERACTUATED_MIXING_PID_MAX_SPEED_ORD);
-        }
 
         //Calculate the orders with the PID gain defined:
         if(position_with_attitude){
@@ -2059,7 +2030,6 @@ void overactuated_mixing_run(pprz_t in_cmd[])
         }
         pos_order_earth[2] = pid_gains_over.p.z * pos_error[2] + pid_gains_over.i.z * pos_error_integrated[2] +
                              pid_gains_over.d.z * speed_vect[2];
-
 
         //Transpose the position errors in the body frame:
         pos_order_body[0] = cos(euler_vect[2]) * pos_order_earth[0] + sin(euler_vect[2]) * pos_order_earth[1];
@@ -2116,38 +2086,29 @@ void overactuated_mixing_run(pprz_t in_cmd[])
             euler_error[2] += 2 * M_PI;
         }
 
-        //Calculate the angular error derivative and integration term for the PID
+        //Calculate and bound the angular error integration term for the PID
         for (i = 0; i < 3; i++) {
-            euler_error_dot[i] = (euler_error[i] - euler_error_old[i]) * PERIODIC_FREQUENCY;
-            euler_error_old[i] = euler_error[i];
             euler_error_integrated[i] += euler_error[i] / PERIODIC_FREQUENCY;
-        }
-        // Propagate the filter on the angular error derivative terms
-        for (i = 0; i < 3; i++) {
-            update_butterworth_2_low_pass(&angular_error_dot_filters[i], euler_error_dot[i]);
-            euler_error_dot_filt[i] = angular_error_dot_filters[i].o[0];
+            BoundAbs(euler_error_integrated[i], OVERACTUATED_MIXING_PID_MAX_EULER_ERR_INTEGRATIVE);
         }
 
         //Now bound the error within the defined ranges:
         BoundAbs(euler_error[2], max_value_error.psi);
 
-        //Bound integrative terms
-        for (i = 0; i < 3; i++) {
-            BoundAbs(euler_error_integrated[i], OVERACTUATED_MIXING_PID_MAX_EULER_ERR_INTEGRATIVE);
-        }
-
-        psi_order_motor = 0;
-        euler_order[2] = 0;
-
         euler_order[0] = pid_gains_over.p.phi * euler_error[0] + pid_gains_over.i.phi * euler_error_integrated[0] -
                          pid_gains_over.d.phi * rate_vect[0];
         euler_order[1] = pid_gains_over.p.theta * euler_error[1] + pid_gains_over.i.theta * euler_error_integrated[1] -
                          pid_gains_over.d.theta * rate_vect[1];
-        //Compute the yaw order:
+
+        euler_order[2] = 0;
+        //Compute the yaw order for the tilting system (if needed):
         if (yaw_with_tilting_PID) {
             euler_order[2] = pid_gains_over.p.psi * euler_error[2] + pid_gains_over.i.psi * euler_error_integrated[2] -
                              pid_gains_over.d.psi * rate_vect[2];
         }
+
+        //Compute the yaw order for the differential motor (if needed)
+        psi_order_motor = 0;
         if (yaw_with_motors_PID) {
             psi_order_motor = pid_gain_psi_motor.p * euler_error[2] + pid_gain_psi_motor.i * euler_error_integrated[2] -
                               pid_gain_psi_motor.d * rate_vect[2];
@@ -2158,7 +2119,6 @@ void overactuated_mixing_run(pprz_t in_cmd[])
         BoundAbs(euler_order[1], OVERACTUATED_MIXING_PID_MAX_PITCH_ORDER_PWM);
         BoundAbs(euler_order[2], OVERACTUATED_MIXING_PID_MAX_YAW_ORDER_AZ);
         BoundAbs(psi_order_motor, OVERACTUATED_MIXING_PID_MAX_YAW_ORDER_MOTOR_PWM);
-
 
         //Submit motor orders:
         if(manual_motor_stick){
@@ -2219,6 +2179,7 @@ void overactuated_mixing_run(pprz_t in_cmd[])
             overactuated_mixing.commands[7] = (int32_t) (-OVERACTUATED_MIXING_SERVO_EL_4_ZERO_VALUE * K_ppz_angle_el);
         }
 
+        //Azimuth servos:
         if (activate_tilting_az_PID || mode_1_control == 0) {
             overactuated_mixing.commands[8] = (int32_t) ((pos_order_body[1] - OVERACTUATED_MIXING_SERVO_AZ_1_ZERO_VALUE) * K_ppz_angle_az);
             overactuated_mixing.commands[9] = (int32_t) ((pos_order_body[1] - OVERACTUATED_MIXING_SERVO_AZ_2_ZERO_VALUE) * K_ppz_angle_az);
@@ -2231,7 +2192,6 @@ void overactuated_mixing_run(pprz_t in_cmd[])
             overactuated_mixing.commands[10] = (int32_t) (-OVERACTUATED_MIXING_SERVO_AZ_3_ZERO_VALUE * K_ppz_angle_az);
             overactuated_mixing.commands[11] = (int32_t) (-OVERACTUATED_MIXING_SERVO_AZ_4_ZERO_VALUE * K_ppz_angle_az);
         }
-
         if (yaw_with_tilting_PID) {
             overactuated_mixing.commands[8] += (int32_t) (euler_order[2] * K_ppz_angle_az);
             overactuated_mixing.commands[9] += (int32_t) (euler_order[2] * K_ppz_angle_az);
@@ -2239,8 +2199,7 @@ void overactuated_mixing_run(pprz_t in_cmd[])
             overactuated_mixing.commands[11] -= (int32_t) (euler_order[2] * K_ppz_angle_az);
         }
 
-
-        //Write the order on the message variables:
+        //Write the orders on the message variables:
         roll_cmd = euler_order[0] * 180 / M_PI;
         pitch_cmd = euler_order[1] * 180 / M_PI;
         yaw_motor_cmd = psi_order_motor;
@@ -2337,9 +2296,9 @@ void overactuated_mixing_run(pprz_t in_cmd[])
 //        BoundAbs(rate_setpoint[2],OVERACTUATED_MIXING_INDI_MAX_R_ORD);
 
         //Compute the angular acceleration setpoint:
-        acc_setpoint[3] = (rate_setpoint[0] - rate_vect[0]) * indi_gains_over.d.phi;
-        acc_setpoint[4] = (rate_setpoint[1] - rate_vect[1]) * indi_gains_over.d.theta;
-        acc_setpoint[5] = (rate_setpoint[2] - rate_vect[2]) * indi_gains_over.d.psi;
+        acc_setpoint[3] = (rate_setpoint[0] - rate_vect_filt[0]) * indi_gains_over.d.phi;
+        acc_setpoint[4] = (rate_setpoint[1] - rate_vect_filt[1]) * indi_gains_over.d.theta;
+        acc_setpoint[5] = (rate_setpoint[2] - rate_vect_filt[2]) * indi_gains_over.d.psi;
 //        BoundAbs(acc_setpoint[3],OVERACTUATED_MIXING_INDI_MAX_P_DOT_ORD * M_PI / 180);
 //        BoundAbs(acc_setpoint[4],OVERACTUATED_MIXING_INDI_MAX_Q_DOT_ORD * M_PI / 180);
 //        BoundAbs(acc_setpoint[5],OVERACTUATED_MIXING_INDI_MAX_R_DOT_ORD * M_PI / 180);

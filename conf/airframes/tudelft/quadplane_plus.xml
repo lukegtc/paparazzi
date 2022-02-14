@@ -32,6 +32,8 @@
       <module name="airspeed" type="ms45xx_i2c">
         <define name="USE_I2C4"/>
         <define name="MS45XX_I2C_DEV" value="i2c4"/>
+        <define name="MS45XX_PRESSURE_OFFSET" value="2119"/>
+        <define name="MS45XX_PRESSURE_RANGE" value="1"/>
       </module>
 <!--      <module name="airspeed_ets.xml">-->
 
@@ -173,24 +175,6 @@
     <servo name="MOTOR_3" no="2" min="1000" neutral="1050" max="2000"/>
     <servo name="MOTOR_4" no="3" min="1000" neutral="1050" max="2000"/>
 
-<!--    <servo name="EL_1" no="4" min="1350" neutral="1780" max="2250"/>-->
-<!--    <servo name="EL_2" no="8" min="1300" neutral="1745" max="2190"/>-->
-<!--    <servo name="EL_3" no="10" min="1270" neutral="1730" max="2190"/>-->
-<!--    <servo name="EL_4" no="6" min="1390" neutral="1760" max="2130"/>-->
-<!--    <servo name="AZ_1" no="5" min="1095" neutral="1447" max="1875"/>-->
-<!--    <servo name="AZ_2" no="9" min="1110" neutral="1474" max="1850"/>-->
-<!--    <servo name="AZ_3" no="11" min="1090" neutral="1470" max="1875"/>-->
-<!--    <servo name="AZ_4" no="7" min="1050" neutral="1420" max="1850"/>-->
-
-<!--    <servo name="EL_1" no="4" min="893" neutral="1982" max="2254"/>-->
-<!--    <servo name="AZ_1" no="5" min="952" neutral="1400" max="1848"/>-->
-<!--    <servo name="EL_2" no="8" min="863" neutral="1923" max="2188"/>-->
-<!--    <servo name="AZ_2" no="9" min="1013" neutral="1444" max="1875"/>-->
-<!--    <servo name="EL_3" no="10" min="902" neutral="1949" max="2211"/>-->
-<!--    <servo name="AZ_3" no="11" min="988" neutral="1425" max="1862"/>-->
-<!--    <servo name="EL_4" no="6" min="827" neutral="1905" max="2175"/>-->
-<!--    <servo name="AZ_4" no="7" min="984" neutral="1423" max="1862"/>-->
-
     <servo name="EL_1" no="8" min="650" neutral="1500" max="2350"/>
     <servo name="EL_2" no="9" min="650" neutral="1500" max="2350"/>
     <servo name="EL_3" no="10" min="650" neutral="1500" max="2350"/>
@@ -297,8 +281,10 @@
     <define name="MAX_X_ERR" value="0.5" unit="m"/>
     <define name="MAX_Y_ERR" value="0.5" unit="m"/>
     <define name="MAX_Z_ERR" value="0.9" unit="m"/>
+
     <!-- PID specific-->
     <define name="PID_MAX_SPEED_ORD" value="15" unit="m/s"/>
+
     <!-- INDI specific-->
     <define name="INDI_MAX_P_ORD" value="100" unit="deg/s"/>
     <define name="INDI_MAX_Q_ORD" value="100" unit="deg/s"/>
@@ -312,6 +298,7 @@
     <define name="INDI_MAX_AX_ORD" value="3" unit="m/s^2"/>
     <define name="INDI_MAX_AY_ORD" value="3" unit="m/s^2"/>
     <define name="INDI_MAX_AZ_ORD" value="3" unit="m/s^2"/>
+
     <!-- PID specific-->
     <define name="PID_MAX_EULER_ERR_INTEGRATIVE" value="40" unit="deg"/>
     <define name="PID_MAX_POS_ERR_INTEGRATIVE" value="3" unit="m"/>
@@ -337,8 +324,8 @@
 <!--    <define name="INDI_REF_RATE_Q" value="10"/>-->
 <!--    <define name="INDI_REF_RATE_R" value="6.8"/>-->
 
-    <define name="INDI_REF_RATE_P" value="25"/>
-    <define name="INDI_REF_RATE_Q" value="25"/>
+    <define name="INDI_REF_RATE_P" value="2.5"/>
+    <define name="INDI_REF_RATE_Q" value="2.5"/>
     <define name="INDI_REF_RATE_R" value="6"/>
 
 
@@ -346,9 +333,9 @@
     <define name="INDI_REF_RATE_Y" value="2.35"/>
     <define name="INDI_REF_RATE_Z" value="8.85"/>
     <!-- Actuator dynamics and mapping-->
-    <define name="INDI_ACT_DYN_MOTOR" value="0.052" unit="seconds"/>
-    <define name="INDI_ACT_DYN_EL" value="0.04" unit="seconds"/>
-    <define name="INDI_ACT_DYN_AZ" value="0.032" unit="seconds"/>
+    <define name="INDI_ACT_DYN_MOTOR" value="0.038" unit="seconds"/><!-- 1-exp(-cutoff_frequency/sampling_frequency)-->
+    <define name="INDI_ACT_DYN_EL" value="0.0511" unit="seconds"/><!-- 1-exp(-cutoff_frequency/sampling_frequency)-->
+    <define name="INDI_ACT_DYN_AZ" value="0.0596" unit="seconds"/><!-- 1-exp(-cutoff_frequency/sampling_frequency)-->
     <define name="MOTOR_K_T_OMEGASQ" value="9.0e-6" unit="N/(rad/s)^2"/>
     <define name="MOTOR_K_M_OMEGASQ" value="1.3e-7" unit="N*m/(rad/s)^2"/>
     <define name="MOTOR_K_PWM_OMEGA" value="1" unit="PWM/(rad/s)"/>
@@ -357,17 +344,11 @@
     <define name="SERVO_AZ_MIN_ANGLE" value="-45" unit="deg"/><!-- Always remember to update the PWM range as well-->
     <define name="SERVO_AZ_MAX_ANGLE" value="45" unit="deg"/>
 
-<!--    <define name="SERVO_EL_MAX_ANGLE" value="32.5" unit="deg"/>-->
-<!--    <define name="SERVO_EL_MIN_ANGLE" value="-32.5" unit="deg"/>-->
-
     <define name="SERVO_EL_MAX_ANGLE" value="25" unit="deg"/>
     <define name="SERVO_EL_MIN_ANGLE" value="-130" unit="deg"/>
 
-<!--    <define name="SERVO_EL_1_ZERO_VALUE" value="-44.23" unit="deg"/>-->
     <define name="SERVO_EL_1_ZERO_VALUE" value="-53" unit="deg"/>
-
     <define name="SERVO_EL_2_ZERO_VALUE" value="-56" unit="deg"/>
-
     <define name="SERVO_EL_3_ZERO_VALUE" value="-53" unit="deg"/>
     <define name="SERVO_EL_4_ZERO_VALUE" value="-51" unit="deg"/>
 
@@ -381,18 +362,10 @@
     <define name="MAX_PHI_FWD" value="30" unit="deg"/>
 
 
-    <!-- Filters properties for PID-->
-    <define name="FILT_CUTOFF_ANG_ERR" value="30" unit="rad/s"/>
-<!--    <define name="FILT_CUTOFF_POS_ERR" value="30" unit="rad/s"/>-->
-    <define name="FILT_CUTOFF_POS_ERR" value="20" unit="rad/s"/>
-
-    <!-- Filters properties for INDI was 20 before -->
-    <define name="FILT_CUTOFF_P" value="15" unit="rad/s"/>
-    <define name="FILT_CUTOFF_Q" value="15" unit="rad/s"/>
-    <define name="FILT_CUTOFF_R" value="15" unit="rad/s"/>
-    <define name="FILT_CUTOFF_ACC_X" value="15" unit="rad/s"/>
-    <define name="FILT_CUTOFF_ACC_Y" value="15" unit="rad/s"/>
-    <define name="FILT_CUTOFF_ACC_Z" value="15" unit="rad/s"/>
+    <!-- Filters properties for INDI -->
+    <define name="FILT_CUTOFF_RATES" value="15" unit="rad/s"/>
+    <define name="FILT_CUTOFF_ANG_ACC" value="15" unit="rad/s"/>
+    <define name="FILT_CUTOFF_LIN_ACC" value="15" unit="rad/s"/>
     <define name="FILT_CUTOFF_ACTUATORS_EL" value="15" unit="rad/s"/>
     <define name="FILT_CUTOFF_ACTUATORS_AZ" value="15" unit="rad/s"/>
     <define name="FILT_CUTOFF_ACTUATORS_MOTOR" value="15" unit="rad/s"/>
