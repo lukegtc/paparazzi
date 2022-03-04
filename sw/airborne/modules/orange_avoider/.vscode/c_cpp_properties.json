@@ -1,0 +1,31 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/home/lukegtc/paparazzi/sw/airborne",
+                "/usr/include/boost/predef/library",
+                "/home/lukegtc/paparazzi/sw/airborne/test/ahrs",
+                "/home/lukegtc/paparazzi",
+                "/home/lukegtc/paparazzi/sw/include",
+                "/home/lukegtc/paparazzi/sw/airborne/firmwares/rotorcraft",
+                "/home/lukegtc/paparazzi/var/include",
+                "/home/lukegtc/paparazzi/sw/airborne/arch/chibios",
+                "/home/lukegtc/paparazzi/sw/ext/chibios/os/rt/include",
+                "/home/lukegtc/paparazzi/sw/ext/chibios/os/license",
+                "/home/lukegtc/paparazzi/sw/ext/chibios/os/common/ports/templates",
+                "/home/lukegtc/paparazzi/sw/ext/chibios/os/oslib/include",
+                "/home/lukegtc/paparazzi/sw/airborne/modules",
+                "/home/lukegtc/paparazzi/sw/airborne/modules",
+                "/home/lukegtc/paparazzi/tests/modules"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/g++",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
+}
