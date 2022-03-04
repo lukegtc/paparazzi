@@ -1,0 +1,21 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "/home/lukegtc/paparazzi/**",
+                "/home/lukegtc/paparazzi/sw/airborne",
+                "/home/lukegtc/paparazzi/sw/airborne/modules/computer_vision",
+                "/home/lukegtc/paparazzi/sw/airborne",
+                "/home/lukegtc/paparazzi/sw/airborne/modules"
+
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/g++",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
+}
